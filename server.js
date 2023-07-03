@@ -75,7 +75,7 @@ async function generateCreditCardToken(number, exp_month, exp_year, cvc) {
 }
 
 // Start your Express server
-const port = proce.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
