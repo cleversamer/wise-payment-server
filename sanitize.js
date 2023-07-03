@@ -3,6 +3,7 @@ const xss = require("xss-clean");
 const cors = require("cors");
 const helmet = require("helmet");
 const { rateLimit } = require("express-rate-limit");
+const mongoose = require("mongoose");
 
 // The following configuration will limit the number of requests
 // for each IP address per a certain amount of time.
@@ -21,4 +22,15 @@ module.exports = (app) => {
   app.use(helmet());
   app.use(cors({ origin: true }));
   app.use(xss());
+
+  mongoose.set("strictQuery", false);
+
+  mongoose
+    .connect("mongodb://127.0.0.1:27017/wise")
+    .then((value) => {
+      console.log(`Connected to MongoDB server successfully`);
+    })
+    .catch((err) => {
+      console.log(`Failed to connect to MongoDB Server: ${err.message}`);
+    });
 };

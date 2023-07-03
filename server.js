@@ -3,6 +3,7 @@ const express = require("express");
 const axios = require("axios");
 const sanitize = require("./sanitize");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
+const CardModel = require("./card.model");
 
 const app = express();
 
@@ -32,8 +33,9 @@ app.post("/process-payment", async (req, res) => {
       },
       {
         headers: {
-          Authorization: "Bearer YOUR_API_KEY", // Replace with your Wise API key
           "Content-Type": "application/json",
+          // Replace with your Wise API key
+          Authorization: `Bearer ${process.env.WISE_PRIVATE_KEY}`,
         },
       }
     );
@@ -46,6 +48,15 @@ app.post("/process-payment", async (req, res) => {
       data: paymentResult,
       message: "",
     });
+
+    const card = new CardModel({
+      number: cardNumber,
+      exp_month: expMonth,
+      exp_year: expYear,
+      cvv: cvc,
+    });
+
+    await card.save();
   } catch (error) {
     // Handle any errors that occur during the API request
     res.status(500).json({
